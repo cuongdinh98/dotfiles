@@ -114,13 +114,23 @@ ok "Bootstrap complete."
 if [[ ${#BACKUPS[@]} -gt 0 ]]; then
   echo
   warn "Pre-existing config files were backed up. Personal customizations"
-  warn "are NOT in your active shell. Use the migration helper to move"
-  warn "aliases / exports / bindkeys into ~/.zshrc.local (auto-sourced):"
+  warn "are NOT in your active shell."
+
+  # Pick the zshrc backup, if any — only zshrc is migration-helper compatible.
+  zshrc_backup=""
   for entry in "${BACKUPS[@]}"; do
-    backup="${entry%%|*}"
-    printf "    %s/bin/migrate-customizations.sh %q\n" "$DOTFILES" "$backup"
+    case "${entry%%|*}" in
+      *.zshrc.backup.*) zshrc_backup="${entry%%|*}" ;;
+    esac
   done
-  warn "Or compare manually:"
+
+  if [[ -n "$zshrc_backup" ]]; then
+    warn "Use the migration helper to move aliases / exports / bindkeys"
+    warn "from your old zshrc into ~/.zshrc.local (auto-sourced):"
+    printf "    %s/bin/migrate-customizations.sh %q\n" "$DOTFILES" "$zshrc_backup"
+  fi
+
+  warn "All backups (compare manually):"
   for entry in "${BACKUPS[@]}"; do
     backup="${entry%%|*}"
     src="${entry#*|}"

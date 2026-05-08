@@ -14,7 +14,7 @@ git clone https://github.com/cuongdinh98/dotfiles.git ~/dotfiles && ~/dotfiles/b
 
 | Path | What it is |
 |---|---|
-| `Brewfile` | All Homebrew packages (iTerm2, Starship, plugins, fonts, gh, Java) |
+| `Brewfile` | All Homebrew packages (iTerm2, Starship, plugins, fonts, gh) |
 | `bootstrap.sh` | Idempotent installer — installs Homebrew, runs `brew bundle`, symlinks configs |
 | `zsh/zshrc` | Shell config: history, completion, aliases, plugin sourcing, Starship init |
 | `zsh/zprofile` | Brew shellenv (login shell) |

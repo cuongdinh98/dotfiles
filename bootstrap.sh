@@ -128,6 +128,11 @@ if [[ ${#BACKUPS[@]} -gt 0 ]]; then
     warn "Use the migration helper to move aliases / exports / bindkeys"
     warn "from your old zshrc into ~/.zshrc.local (auto-sourced):"
     printf "    %s/bin/migrate-customizations.sh %q\n" "$DOTFILES" "$zshrc_backup"
+    echo
+    if [[ "${NONINTERACTIVE:-0}" != "1" ]] && ask "Run the migration helper now?"; then
+      "$DOTFILES/bin/migrate-customizations.sh" "$zshrc_backup" || \
+        warn "Migration helper exited non-zero; you can re-run it later by hand."
+    fi
   fi
 
   warn "All backups (compare manually):"

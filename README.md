@@ -116,12 +116,16 @@ export PATH="$HOME/Code/bin:$PATH"
 
 ### Upgrading from an existing zshrc
 
-If you already had a `~/.zshrc` with personal aliases when you ran `bootstrap.sh`, it was backed up to `~/.zshrc.backup.<timestamp>` and the install printed instructions pointing here. Run the migration helper to extract aliases / exports / bindkeys into `~/.zshrc.local` automatically:
+If you already had a `~/.zshrc` with personal aliases when you ran `bootstrap.sh`, it was backed up to `~/.zshrc.backup.<timestamp>`. At the end of the install, **bootstrap will offer to run the migration helper for you** — answer `Y` and your aliases / exports / bindkeys are moved into `~/.zshrc.local` interactively.
+
+You can also run the helper yourself any time:
 
 ```sh
 ~/dotfiles/bin/migrate-customizations.sh   # auto-detects newest backup
 ~/dotfiles/bin/migrate-customizations.sh ~/.zshrc.backup.20241015-143022   # explicit
 ```
+
+(In `NONINTERACTIVE=1` installs the prompt is skipped — re-run the helper manually when you're ready.)
 
 The helper:
 - Extracts single-line `alias`, `export`, `bindkey`, and `name() { …; }` declarations.

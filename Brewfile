@@ -7,8 +7,6 @@ brew "zsh-syntax-highlighting"
 # CLI tools
 brew "gh"
 
-# Languages / runtimes
-brew "openjdk@17"
-
 # Fonts
 cask "font-jetbrains-mono-nerd-font"
+

@@ -1,7 +1,5 @@
 # --- PATH & env ---
 export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/Qt/6.9.1/macos/bin:$PATH"
-export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"  # Garmin Connect IQ SDK requires Java
 
 # --- Locale & colors (fixes "ugly" SSH sessions, broken accented chars, etc.) ---
 export LANG=en_US.UTF-8
@@ -35,8 +33,6 @@ alias ...="cd ../.."
 alias gs="git status"
 alias gd="git diff"
 alias gl="git log --oneline --graph --decorate -20"
-alias sshToTh10="ssh dinhd@193.55.164.41"
-alias sshToTh10ForParaview="ssh -L 1111:localhost:1111 dinhd@193.55.164.28"
 
 # --- nvm ---
 export NVM_DIR="$HOME/.nvm"

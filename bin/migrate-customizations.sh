@@ -12,6 +12,12 @@ DOTFILES="${DOTFILES:-$HOME/dotfiles}"
 ZSHRC_PUBLIC="$DOTFILES/zsh/zshrc"
 ZSHRC_LOCAL="$HOME/.zshrc.local"
 
+if [[ ! -f "$ZSHRC_PUBLIC" ]]; then
+  echo "public zshrc not found: $ZSHRC_PUBLIC" >&2
+  echo "(set DOTFILES to your dotfiles repo path)" >&2
+  exit 1
+fi
+
 # 1. Resolve backup file
 backup="${1:-}"
 if [[ -z "$backup" ]]; then
@@ -26,4 +32,36 @@ elif [[ ! -f "$backup" ]]; then
 fi
 
 echo "Scanning $backup ..."
-# Further logic added in subsequent tasks.
+
+# 2. Extract candidate single-line patterns
+candidates=$(grep -nE '^(alias |export |bindkey |[a-zA-Z_][a-zA-Z0-9_]*\(\)[[:space:]]*\{.*\}[[:space:]]*$)' "$backup" || true)
+
+# 3. Filter out lines that exist verbatim in the public zshrc
+filtered=""
+while IFS= read -r line; do
+  [[ -z "$line" ]] && continue
+  content="${line#*:}"
+  if ! grep -Fxq -- "$content" "$ZSHRC_PUBLIC"; then
+    filtered+="${line}"$'\n'
+  fi
+done <<< "$candidates"
+
+# 4. Show user
+if [[ -z "$filtered" ]]; then
+  echo "No migratable customizations found."
+  exit 0
+fi
+
+echo
+echo "Candidates to migrate:"
+printf '%s' "$filtered" | sed 's/^[0-9]*://'
+
+# 5. Prompt
+echo
+read -r -p "Append the candidates above to $ZSHRC_LOCAL? [y/N] " reply
+if [[ ! "$reply" =~ ^[Yy]$ ]]; then
+  echo "No changes made."
+  exit 0
+fi
+
+echo "(append logic comes in next task)"

@@ -8,6 +8,7 @@
 set -euo pipefail
 
 DOTFILES="${DOTFILES:-$(cd "$(dirname "$0")/.." && pwd)}"
+export DOTFILES
 HELPER="$DOTFILES/bin/migrate-customizations.sh"
 
 pass=0
@@ -42,8 +43,55 @@ test_missing_backup() {
   cleanup_sandbox
 }
 
+# --- Test 2: extracts alias / export / bindkey lines from a backup ---
+test_extract_simple() {
+  make_sandbox
+  cat > "$HOME/.zshrc.backup.20990101-000000" <<'BACKUP'
+alias gp="git push"
+export PATH="$HOME/scripts:$PATH"
+bindkey -s '^[g' 'git status\n'
+# a comment alone — should not be extracted
+BACKUP
+  # Pipe "n" so the prompt doesn't actually write — we just want to see candidates.
+  output=$(printf 'n\n' | "$HELPER" 2>&1 || true)
+  if echo "$output" | grep -q 'gp="git push"' \
+     && echo "$output" | grep -q 'PATH="$HOME/scripts' \
+     && echo "$output" | grep -q "bindkey -s" \
+     && ! echo "$output" | grep -q 'a comment alone' \
+     && echo "$output" | grep -q "No changes made"
+  then
+    pass_test "extract: alias/export/bindkey shown, comments skipped"
+  else
+    fail_test "extract: missing or wrong candidates. output: $output"
+  fi
+  cleanup_sandbox
+}
+
+# --- Test 3: lines already present in public zshrc are filtered out ---
+test_dedup_against_public() {
+  make_sandbox
+  # Use the actual public zshrc (which has `alias ll="ls -lah"`).
+  cat > "$HOME/.zshrc.backup.20990101-000001" <<'BACKUP'
+alias ll="ls -lah"
+alias gp="git push"
+BACKUP
+  output=$(printf 'n\n' | "$HELPER" 2>&1 || true)
+  # gp should appear, ll should NOT (it's in public zshrc).
+  if echo "$output" | grep -q 'gp="git push"' \
+     && ! echo "$output" | grep -q 'alias ll=' \
+     && echo "$output" | grep -q "No changes made"
+  then
+    pass_test "dedup: filters lines already in public zshrc"
+  else
+    fail_test "dedup: wrong filtering. output: $output"
+  fi
+  cleanup_sandbox
+}
+
 # --- Run all tests ---
 test_missing_backup
+test_extract_simple
+test_dedup_against_public
 
 echo
 echo "=== $pass passed, $fail failed ==="

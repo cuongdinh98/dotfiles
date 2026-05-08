@@ -61,14 +61,42 @@ else
   ok "nvm already present."
 fi
 
+# ---- 5. iTerm2 preferences (optional, interactive) --------------------------
+# Note: iTerm2 owns its plist while running and writes its in-memory state on
+# quit. If iTerm2 is open when these run, the changes may be overwritten when
+# you quit. Cleanest scenario: run bootstrap before launching iTerm2 the first
+# time on a new Mac. Otherwise, fully quit iTerm2 right after this script and
+# relaunch.
+ask() {
+  local prompt="$1" default="${2:-Y}" reply
+  if [[ "${NONINTERACTIVE:-0}" == "1" ]]; then reply="$default"; else
+    read -r -p "$prompt [$([[ $default == Y ]] && echo Y/n || echo y/N)] " reply || reply=""
+    reply="${reply:-$default}"
+  fi
+  [[ "$reply" =~ ^[Yy]$ ]]
+}
+
+if ask "Set Tokyo Night as default iTerm2 profile?"; then
+  defaults write com.googlecode.iterm2 "Default Bookmark Guid" -string "TOKYO-NIGHT-DEFAULT-PROFILE"
+  ok "Tokyo Night set as default profile."
+fi
+
+if ask "Lock iTerm2 to dark window chrome (Minimal theme)?"; then
+  # 0=Light 1=Dark 2=LightHC 3=DarkHC 4=Auto 5=Minimal 6=Compact
+  defaults write com.googlecode.iterm2 TabStyleWithAutomaticOption -int 5
+  ok "iTerm2 theme set to Minimal (dark window chrome locked)."
+fi
+
+if pgrep -x iTerm2 >/dev/null 2>&1; then
+  warn "iTerm2 is currently running — fully quit it (⌘Q) and relaunch so these settings stick."
+fi
+
 echo
 ok "Bootstrap complete."
 cat <<'EOF'
 
 Next steps:
   1. Quit and relaunch iTerm2 so the Tokyo Night dynamic profile loads.
-  2. iTerm2 → Settings (⌘,) → Profiles → "Tokyo Night" → Other Actions… → Set as Default.
-  3. Settings → Appearance → General → Theme: Minimal (or Dark).
-  4. Run:  exec zsh    (to pick up the new shell config in your current session)
+  2. Run:  exec zsh    (to pick up the new shell config in your current session)
 
 EOF

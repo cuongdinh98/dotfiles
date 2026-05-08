@@ -57,3 +57,7 @@ eval "$(starship init zsh)"
 
 # --- iTerm2 shell integration (loaded last; safe no-op outside iTerm2) ---
 [ -f "$HOME/.iterm2_shell_integration.zsh" ] && source "$HOME/.iterm2_shell_integration.zsh"
+
+# --- Personal customizations (not tracked by this repo) ---
+# ~/.zshrc.local is never touched by bootstrap.sh — put your aliases / exports here.
+[ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"

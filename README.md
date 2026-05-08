@@ -5,7 +5,7 @@ Personal macOS terminal setup — **iTerm2 + Zsh + Starship + Tokyo Night**, des
 One command bootstraps a fresh Mac.
 
 ```bash
-git clone https://github.com/<you>/dotfiles.git ~/dotfiles && ~/dotfiles/bootstrap.sh
+git clone https://github.com/cuongdinh98/dotfiles.git ~/dotfiles && ~/dotfiles/bootstrap.sh
 ```
 
 ---
@@ -32,7 +32,7 @@ git clone https://github.com/<you>/dotfiles.git ~/dotfiles && ~/dotfiles/bootstr
    ```
 2. **Clone & bootstrap**:
    ```bash
-   git clone https://github.com/<you>/dotfiles.git ~/dotfiles
+   git clone https://github.com/cuongdinh98/dotfiles.git ~/dotfiles
    cd ~/dotfiles && ./bootstrap.sh
    ```
 3. **Quit & relaunch iTerm2.**
@@ -112,7 +112,7 @@ To get the same Tokyo Night Starship prompt on the remote Linux box:
 ```bash
 curl -sS https://starship.rs/install.sh | sh
 mkdir -p ~/.config && curl -fsSL \
-  https://raw.githubusercontent.com/<you>/dotfiles/main/starship/starship.toml \
+  https://raw.githubusercontent.com/cuongdinh98/dotfiles/main/starship/starship.toml \
   -o ~/.config/starship.toml
 echo 'eval "$(starship init bash)"' >> ~/.bashrc   # or zsh, fish, etc.
 ```

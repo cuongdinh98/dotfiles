@@ -61,6 +61,14 @@ else
   ok "nvm already present."
 fi
 
+# ---- 4b. iTerm2 shell integration ------------------------------------------
+# Enables prompt marks (⌘↑/⌘↓), command status, alert-on-finish, click-to-rerun,
+# and remote-dir forwarding over SSH. zshrc sources it if present.
+log "Installing iTerm2 shell integration…"
+curl -fsSL https://iterm2.com/shell_integration/zsh \
+  -o "$HOME/.iterm2_shell_integration.zsh"
+ok "iTerm2 shell integration ready."
+
 # ---- 5. iTerm2 preferences (optional, interactive) --------------------------
 # Note: iTerm2 owns its plist while running and writes its in-memory state on
 # quit. If iTerm2 is open when these run, the changes may be overwritten when
@@ -85,6 +93,13 @@ if ask "Lock iTerm2 to dark window chrome (Minimal theme)?"; then
   # 0=Light 1=Dark 2=LightHC 3=DarkHC 4=Auto 5=Minimal 6=Compact
   defaults write com.googlecode.iterm2 TabStyleWithAutomaticOption -int 5
   ok "iTerm2 theme set to Minimal (dark window chrome locked)."
+fi
+
+if ask "Disable macOS window state restoration for iTerm2 (fixes tiny-window-on-launch)?"; then
+  # Stops macOS from restoring last session's window size, so the profile's
+  # Columns/Rows (140x40) are honored on every launch.
+  defaults write com.googlecode.iterm2 NSQuitAlwaysKeepsWindows -bool false
+  ok "Window state restoration disabled — windows will use profile size."
 fi
 
 if pgrep -x iTerm2 >/dev/null 2>&1; then

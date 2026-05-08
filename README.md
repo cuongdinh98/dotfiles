@@ -59,6 +59,8 @@ The configs live in this repo and are **symlinked** into their real locations. S
 - **JetBrainsMono Nerd Font** — ligatures + nerd-font glyphs for prompt icons.
 - 140 × 40 default window, 5% transparency + blur.
 - Unlimited scrollback, silent + visual bell.
+- **Shell integration** — `⌘↑`/`⌘↓` jumps between prompts, command-status indicators, "alert when finished" (`⌥⌘A`), click-to-rerun, remote-dir forwarding over SSH.
+- **Natural Text Editing keymap** — `⌥←/→` jumps words, `⌘←/→` jumps line start/end, `⌥⌫` deletes word, `⌘⌫` clears line.
 
 ### Shell
 - **Zsh** with sane history (50k entries, deduped, shared between sessions).
@@ -121,7 +123,7 @@ echo 'eval "$(starship init bash)"' >> ~/.bashrc   # or zsh, fish, etc.
 
 ## Troubleshooting
 
-**iTerm2 opens a tiny window.** Settings → General → Startup → "Window restoration policy" = **Open Default Window Arrangement** (macOS otherwise restores the last weird size).
+**iTerm2 opens a tiny window.** `bootstrap.sh` offers to disable macOS state restoration for iTerm2, which fixes this. If you skipped that prompt, run `defaults write com.googlecode.iterm2 NSQuitAlwaysKeepsWindows -bool false` and relaunch iTerm2.
 
 **"Dynamic profile references unknown parent name."** Means `Dynamic Profile Parent Name` is set to a profile that doesn't exist. The profile in this repo doesn't use that field — if you've added it, just remove it.
 

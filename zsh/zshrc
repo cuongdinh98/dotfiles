@@ -54,3 +54,6 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#565f89"
 
 # --- Starship prompt ---
 eval "$(starship init zsh)"
+
+# --- iTerm2 shell integration (loaded last; safe no-op outside iTerm2) ---
+[ -f "$HOME/.iterm2_shell_integration.zsh" ] && source "$HOME/.iterm2_shell_integration.zsh"

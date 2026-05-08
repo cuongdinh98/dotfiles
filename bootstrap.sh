@@ -7,6 +7,7 @@ set -euo pipefail
 
 DOTFILES="${DOTFILES:-$HOME/dotfiles}"
 TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
+BACKUPS=()  # entries: "<backup-path>|<source-symlink-target>"
 
 log()  { printf "\033[1;34m==>\033[0m %s\n" "$*"; }
 warn() { printf "\033[1;33m!! \033[0m %s\n" "$*"; }
@@ -40,6 +41,7 @@ link() {
     local backup="${dst}.backup.${TIMESTAMP}"
     mv "$dst" "$backup"
     warn "Existing $dst backed up to $backup"
+    BACKUPS+=("${backup}|${src}")
   fi
   ln -s "$src" "$dst"
   ok "Linked $(basename "$dst")"
@@ -108,6 +110,24 @@ fi
 
 echo
 ok "Bootstrap complete."
+
+if [[ ${#BACKUPS[@]} -gt 0 ]]; then
+  echo
+  warn "Pre-existing config files were backed up. Personal customizations"
+  warn "are NOT in your active shell. Use the migration helper to move"
+  warn "aliases / exports / bindkeys into ~/.zshrc.local (auto-sourced):"
+  for entry in "${BACKUPS[@]}"; do
+    backup="${entry%%|*}"
+    printf "    %s/bin/migrate-customizations.sh %q\n" "$DOTFILES" "$backup"
+  done
+  warn "Or compare manually:"
+  for entry in "${BACKUPS[@]}"; do
+    backup="${entry%%|*}"
+    src="${entry#*|}"
+    printf "    diff %q %q\n" "$src" "$backup"
+  done
+fi
+
 cat <<'EOF'
 
 Next steps:

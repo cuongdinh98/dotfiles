@@ -48,7 +48,7 @@ The configs live in this repo and are **symlinked** into their real locations. S
 
 - **Edit a config** → just edit the file in `~/dotfiles/…` (or via the symlink, same thing).
 - **Sync to your other Mac** → `git add -A && git commit -m "tweak prompt" && git push`. On the other Mac, `cd ~/dotfiles && git pull`. Changes are live instantly — no re-run of bootstrap needed.
-- **Re-run bootstrap.sh** is safe — it backs up anything it would overwrite.
+- **Re-run bootstrap.sh** is safe — it backs up anything it would overwrite, and on first install it tells you to migrate any aliases from your old zshrc into `~/.zshrc.local` (see "Personal customizations" below).
 
 ---
 
@@ -98,6 +98,37 @@ In `iterm2/tokyo-night.json` set `"Columns"` and `"Rows"`. Some defaults:
 
 ### Add brew packages
 Append to `Brewfile`, then `brew bundle`.
+
+---
+
+## Personal customizations
+
+This repo is the **public, common** layer. Per-user content (your SSH aliases, project-specific PATHs, machine-specific exports) belongs in `~/.zshrc.local` — a file outside this repo that the public `zshrc` sources at the very end if it exists.
+
+```sh
+# ~/.zshrc.local — example
+alias gp="git push"
+alias mywork="ssh me@my-private-server"
+export PATH="$HOME/Code/bin:$PATH"
+```
+
+`bootstrap.sh` never creates, modifies, or symlinks `~/.zshrc.local`. Re-installing the dotfiles or pulling upstream changes will not touch it.
+
+### Upgrading from an existing zshrc
+
+If you already had a `~/.zshrc` with personal aliases when you ran `bootstrap.sh`, it was backed up to `~/.zshrc.backup.<timestamp>` and the install printed instructions pointing here. Run the migration helper to extract aliases / exports / bindkeys into `~/.zshrc.local` automatically:
+
+```sh
+~/dotfiles/bin/migrate-customizations.sh   # auto-detects newest backup
+~/dotfiles/bin/migrate-customizations.sh ~/.zshrc.backup.20241015-143022   # explicit
+```
+
+The helper:
+- Extracts single-line `alias`, `export`, `bindkey`, and `name() { …; }` declarations.
+- Filters out lines already present in the public `zshrc` (no duplicates).
+- Flags multi-line function declarations (`name() {` bodies spanning multiple lines) as `# REVIEW: <path>:<line>` markers so you can migrate those by hand. Other multi-line constructs (`if`/`while` blocks, here-docs) are not auto-detected — check your backup manually for those.
+- Asks before writing. Appends to `~/.zshrc.local` with a clear `# ─── Migrated from … on … ───` header.
+- Is idempotent: running it twice on the same backup detects the existing migration block and skips.
 
 ---
 

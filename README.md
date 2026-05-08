@@ -1,0 +1,136 @@
+# dotfiles
+
+Personal macOS terminal setup — **iTerm2 + Zsh + Starship + Tokyo Night**, designed to look modern and stay consistent across machines (especially when SSH-ing into Linux servers, where light/dark mismatches usually make things ugly).
+
+One command bootstraps a fresh Mac.
+
+```bash
+git clone https://github.com/<you>/dotfiles.git ~/dotfiles && ~/dotfiles/bootstrap.sh
+```
+
+---
+
+## What's inside
+
+| Path | What it is |
+|---|---|
+| `Brewfile` | All Homebrew packages (iTerm2, Starship, plugins, fonts, gh, Java) |
+| `bootstrap.sh` | Idempotent installer — installs Homebrew, runs `brew bundle`, symlinks configs |
+| `zsh/zshrc` | Shell config: history, completion, aliases, plugin sourcing, Starship init |
+| `zsh/zprofile` | Brew shellenv (login shell) |
+| `starship/starship.toml` | Two-line Tokyo Night prompt with OS / user / dir / git / language segments |
+| `iterm2/tokyo-night.json` | iTerm2 [Dynamic Profile](https://iterm2.com/documentation-dynamic-profiles.html) — auto-loaded on launch |
+| `iterm2/tokyonight_night.itermcolors` | Standalone color preset (importable into any iTerm2 profile) |
+
+---
+
+## Quick start (new Mac)
+
+1. **Install Xcode CLT** (one-off, gives you `git`):
+   ```bash
+   xcode-select --install
+   ```
+2. **Clone & bootstrap**:
+   ```bash
+   git clone https://github.com/<you>/dotfiles.git ~/dotfiles
+   cd ~/dotfiles && ./bootstrap.sh
+   ```
+3. **Quit & relaunch iTerm2.**
+4. In iTerm2: `⌘,` → **Profiles** → click **Tokyo Night** → **Other Actions… → Set as Default**.
+5. `⌘,` → **Appearance → General → Theme** = `Minimal` (or `Dark`).
+6. New shell: `exec zsh` — done.
+
+---
+
+## Daily workflow
+
+The configs live in this repo and are **symlinked** into their real locations. So:
+
+- **Edit a config** → just edit the file in `~/dotfiles/…` (or via the symlink, same thing).
+- **Sync to your other Mac** → `git add -A && git commit -m "tweak prompt" && git push`. On the other Mac, `cd ~/dotfiles && git pull`. Changes are live instantly — no re-run of bootstrap needed.
+- **Re-run bootstrap.sh** is safe — it backs up anything it would overwrite.
+
+---
+
+## What you get
+
+### Terminal
+- **iTerm2** with Tokyo Night colors, dark window chrome locked (so SSH sessions look right even when macOS is in light mode).
+- **JetBrainsMono Nerd Font** — ligatures + nerd-font glyphs for prompt icons.
+- 140 × 40 default window, 5% transparency + blur.
+- Unlimited scrollback, silent + visual bell.
+
+### Shell
+- **Zsh** with sane history (50k entries, deduped, shared between sessions).
+- **Starship prompt** — fast, two-line, shows OS / user / dir / git status / detected language version / command duration.
+- **zsh-autosuggestions** — fish-style ghost suggestions from history.
+- **zsh-syntax-highlighting** — commands turn green/red as you type.
+- UTF-8 locale + `COLORTERM=truecolor` exported, so SSH'd Linux apps render colors correctly.
+
+### Aliases
+```
+ls   = ls -lahG
+ll   = ls -lah
+gs   = git status
+gd   = git diff
+gl   = git log --oneline --graph --decorate -20
+..   = cd ..
+...  = cd ../..
+```
+
+---
+
+## Customizing
+
+### Change the prompt
+Edit `starship/starship.toml`. Live preview: every new prompt re-reads the file.
+
+### Change colors
+Edit `iterm2/tokyo-night.json`. iTerm2 picks up Dynamic Profile changes within a few seconds. If you rename the profile, iTerm2 may keep the old one cached — easiest is to quit & relaunch.
+
+### Change window size
+In `iterm2/tokyo-night.json` set `"Columns"` and `"Rows"`. Some defaults:
+- Compact: `120 × 35`
+- Comfortable: `140 × 40` (current)
+- Large: `160 × 50`
+
+### Add brew packages
+Append to `Brewfile`, then `brew bundle`.
+
+---
+
+## SSH to Linux looking right
+
+The config is tuned to keep remote sessions readable:
+
+- iTerm2 theme set to **Minimal/Dark** locks dark window chrome regardless of macOS appearance — the most common cause of "ugly SSH" is fixed.
+- Profile background `#1a1b26` is dark, so any remote app that doesn't override its own background inherits a sane dark.
+- `TERM=xterm-256color`, `COLORTERM=truecolor`, `LANG=en_US.UTF-8` are exported, so vim/htop/btop/tmux on the remote get full color and proper unicode.
+- The Nerd Font is set as the non-ASCII fallback — prompt glyphs render even on servers without a Nerd Font installed.
+
+To get the same Tokyo Night Starship prompt on the remote Linux box:
+```bash
+curl -sS https://starship.rs/install.sh | sh
+mkdir -p ~/.config && curl -fsSL \
+  https://raw.githubusercontent.com/<you>/dotfiles/main/starship/starship.toml \
+  -o ~/.config/starship.toml
+echo 'eval "$(starship init bash)"' >> ~/.bashrc   # or zsh, fish, etc.
+```
+
+---
+
+## Troubleshooting
+
+**iTerm2 opens a tiny window.** Settings → General → Startup → "Window restoration policy" = **Open Default Window Arrangement** (macOS otherwise restores the last weird size).
+
+**"Dynamic profile references unknown parent name."** Means `Dynamic Profile Parent Name` is set to a profile that doesn't exist. The profile in this repo doesn't use that field — if you've added it, just remove it.
+
+**Fonts look like squares / question marks.** Nerd Font isn't installed or isn't selected. Check `~/Library/Fonts/JetBrainsMonoNerdFont-Regular.ttf` exists, then iTerm2 → Profile → Text → Font.
+
+**Plugins not loading.** `brew list zsh-autosuggestions zsh-syntax-highlighting` should show both. If they're missing, run `~/dotfiles/bootstrap.sh` again.
+
+---
+
+## License
+
+Use it however you like. No warranty.

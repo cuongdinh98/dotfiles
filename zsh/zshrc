@@ -1,0 +1,56 @@
+# --- PATH & env ---
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/Qt/6.9.1/macos/bin:$PATH"
+export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"  # Garmin Connect IQ SDK requires Java
+
+# --- Locale & colors (fixes "ugly" SSH sessions, broken accented chars, etc.) ---
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+export TERM=xterm-256color
+export COLORTERM=truecolor
+export CLICOLOR=1
+export LSCOLORS=GxFxCxDxBxegedabagaced
+
+# --- History ---
+HISTFILE=~/.zsh_history
+HISTSIZE=50000
+SAVEHIST=50000
+setopt HIST_IGNORE_DUPS HIST_IGNORE_SPACE HIST_REDUCE_BLANKS SHARE_HISTORY INC_APPEND_HISTORY EXTENDED_HISTORY
+
+# --- QoL ---
+setopt AUTO_CD AUTO_PUSHD PUSHD_IGNORE_DUPS INTERACTIVE_COMMENTS
+bindkey -e
+
+# --- Completion ---
+autoload -Uz compinit && compinit
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
+
+# --- Aliases ---
+alias ls="ls -lahG"
+alias ll="ls -lah"
+alias la="ls -A"
+alias ..="cd .."
+alias ...="cd ../.."
+alias gs="git status"
+alias gd="git diff"
+alias gl="git log --oneline --graph --decorate -20"
+alias sshToTh10="ssh dinhd@193.55.164.41"
+alias sshToTh10ForParaview="ssh -L 1111:localhost:1111 dinhd@193.55.164.28"
+
+# --- nvm ---
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# --- Plugins (must be loaded BEFORE starship init for syntax highlighting to work right) ---
+[ -f /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ] && \
+  source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+[ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && \
+  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# Tokyo Night-friendly autosuggest color
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#565f89"
+
+# --- Starship prompt ---
+eval "$(starship init zsh)"

@@ -88,10 +88,98 @@ BACKUP
   cleanup_sandbox
 }
 
+# --- Test 4: multi-line function declarations get a REVIEW marker ---
+test_multiline_review() {
+  make_sandbox
+  cat > "$HOME/.zshrc.backup.20990101-000002" <<'BACKUP'
+alias gp="git push"
+my_helper() {
+  echo hi
+}
+BACKUP
+  output=$(printf 'n\n' | "$HELPER" 2>&1 || true)
+  # After Fix 1 the REVIEW line is "# REVIEW: <path>:<lineno>" only —
+  # the function name no longer appears in the marker itself.
+  if echo "$output" | grep -qE "REVIEW:.*\.zshrc\.backup\.[^:]+:[0-9]+$"; then
+    pass_test "review: multi-line function flagged"
+  else
+    fail_test "review: missing marker. output: $output"
+  fi
+  cleanup_sandbox
+}
+
+# --- Test 5: 'y' answer appends to ~/.zshrc.local with header ---
+test_append_to_local() {
+  make_sandbox
+  cat > "$HOME/.zshrc.backup.20990101-000003" <<'BACKUP'
+alias gp="git push"
+BACKUP
+  output=$(printf 'y\n' | "$HELPER" 2>&1 || true)
+  if [[ -f "$HOME/.zshrc.local" ]] \
+     && grep -q 'alias gp="git push"' "$HOME/.zshrc.local" \
+     && grep -q 'Migrated from' "$HOME/.zshrc.local"
+  then
+    pass_test "append: ~/.zshrc.local created with content + header"
+  else
+    fail_test "append: missing file or content. output: $output; local: $(cat "$HOME/.zshrc.local" 2>&1 || echo missing)"
+  fi
+  cleanup_sandbox
+}
+
+# --- Test 6: backup with no migratable lines exits 0 cleanly ---
+test_empty_backup() {
+  make_sandbox
+  cat > "$HOME/.zshrc.backup.20990101-000004" <<'BACKUP'
+# only a comment
+BACKUP
+  if output=$("$HELPER" 2>&1); then
+    if echo "$output" | grep -q "No migratable customizations found"; then
+      pass_test "empty: exit 0, clear message, no ~/.zshrc.local created"
+    else
+      fail_test "empty: exit 0 but wrong output: $output"
+    fi
+  else
+    fail_test "empty: expected exit 0, got non-zero. output: $output"
+  fi
+  if [[ -f "$HOME/.zshrc.local" ]]; then
+    fail_test "empty: ~/.zshrc.local should not have been created"
+  fi
+  cleanup_sandbox
+}
+
+# --- Test 7: backup with ONLY multi-line constructs exits 0 with hint ---
+test_only_multiline() {
+  make_sandbox
+  cat > "$HOME/.zshrc.backup.20990101-000005" <<'BACKUP'
+my_func() {
+  echo hi
+}
+BACKUP
+  if output=$("$HELPER" 2>&1 < /dev/null); then
+    if echo "$output" | grep -qE "REVIEW:.*\.zshrc\.backup\.[^:]+:[0-9]+$" \
+       && echo "$output" | grep -q "Nothing to append automatically"
+    then
+      pass_test "only-multiline: REVIEW shown, exits 0 with hint"
+    else
+      fail_test "only-multiline: wrong output: $output"
+    fi
+  else
+    fail_test "only-multiline: expected exit 0, got non-zero: $output"
+  fi
+  if [[ -f "$HOME/.zshrc.local" ]]; then
+    fail_test "only-multiline: ~/.zshrc.local should not have been created"
+  fi
+  cleanup_sandbox
+}
+
 # --- Run all tests ---
 test_missing_backup
 test_extract_simple
 test_dedup_against_public
+test_multiline_review
+test_append_to_local
+test_empty_backup
+test_only_multiline
 
 echo
 echo "=== $pass passed, $fail failed ==="

@@ -46,6 +46,16 @@ alias gs="git status"
 alias gd="git diff"
 alias gl="git log --oneline --graph --decorate -20"
 
+# eza (modern ls) — additive: `ls` stays plain `ls`. Short new aliases below.
+if command -v eza >/dev/null 2>&1; then
+  alias l='eza --icons --git'
+  alias ll='eza -lah --icons --git --group-directories-first'
+  alias lt='eza --tree --level=2 --icons --git'
+  alias lg='eza -lah --icons --git --git-ignore'
+  # Tokyo Night-ish file colors. Override default eza palette to harmonize.
+  export EZA_COLORS="da=38;5;110:di=38;5;111:ex=38;5;150:ln=38;5;141:un=38;5;174"
+fi
+
 # --- Modern tools (init order matters — see spec) ---
 # zoxide: smart `cd` replacement. `z foo` jumps to most-frecent dir matching foo,
 # `zi` opens an fzf-style interactive picker.

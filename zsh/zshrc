@@ -51,6 +51,18 @@ alias gl="git log --oneline --graph --decorate -20"
 # `zi` opens an fzf-style interactive picker.
 eval "$(zoxide init zsh)"
 
+# fzf: source key-bindings (Ctrl-T / Alt-C / Ctrl-R) and fuzzy completion (** trigger).
+# atuin (below) re-binds Ctrl-R; fzf's Ctrl-T and Alt-C survive.
+if [[ -f /opt/homebrew/opt/fzf/shell/key-bindings.zsh ]]; then
+  source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
+fi
+if [[ -f /opt/homebrew/opt/fzf/shell/completion.zsh ]]; then
+  source /opt/homebrew/opt/fzf/shell/completion.zsh
+fi
+
+# Tokyo Night palette for fzf (matches starship/iTerm2).
+export FZF_DEFAULT_OPTS="--color=fg:#c0caf5,bg:#1a1b26,hl:#bb9af7,fg+:#c0caf5,bg+:#292e42,hl+:#7dcfff,info:#7aa2f7,prompt:#7dcfff,pointer:#7dcfff,marker:#9ece6a,spinner:#9ece6a,header:#9ece6a"
+
 # --- nvm (lazy) ---
 # Eager nvm sourcing is the single biggest source of slow zsh startup
 # (~150-300ms). Define stubs for nvm/node/npm/npx that source nvm on first

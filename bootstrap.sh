@@ -173,6 +173,14 @@ if [[ ${#BACKUPS[@]} -gt 0 ]]; then
   done
 fi
 
+# Startup-time baseline. Re-run after adding plugins to catch regressions.
+log "Measuring zsh cold-start time (3 runs)…"
+for i in 1 2 3; do
+  /usr/bin/time -p zsh -i -c exit 2>&1 \
+    | grep -o 'real [0-9.]*' \
+    | awk -v i="$i" '{printf "  run %d: %.3fs\n", i, $2}'
+done
+
 cat <<'EOF'
 
 Next steps:

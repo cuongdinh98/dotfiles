@@ -39,6 +39,11 @@ git clone https://github.com/cuongdinh98/dotfiles.git ~/dotfiles && ~/dotfiles/b
 4. In iTerm2: `⌘,` → **Profiles** → click **Tokyo Night** → **Other Actions… → Set as Default**.
 5. `⌘,` → **Appearance → General → Theme** = `Minimal` (or `Dark`).
 6. New shell: `exec zsh` — done.
+7. **(Optional) Enable Tokyo Night `git diff`:** add to `~/.gitconfig`:
+   ```ini
+   [include]
+       path = ~/dotfiles/git/delta.gitconfig
+   ```
 
 ---
 
@@ -49,6 +54,7 @@ The configs live in this repo and are **symlinked** into their real locations. S
 - **Edit a config** → just edit the file in `~/dotfiles/…` (or via the symlink, same thing).
 - **Sync to your other Mac** → `git add -A && git commit -m "tweak prompt" && git push`. On the other Mac, `cd ~/dotfiles && git pull`. Changes are live instantly — no re-run of bootstrap needed.
 - **Re-run bootstrap.sh** is safe — it backs up anything it would overwrite, and on first install it tells you to migrate any aliases from your old zshrc into `~/.zshrc.local` (see "Personal customizations" below).
+- **Run tests before pushing** → `./tests/run.sh`. Covers the migration helper and a smoke test of the modern-tools wiring.
 
 ---
 
@@ -63,21 +69,47 @@ The configs live in this repo and are **symlinked** into their real locations. S
 - **Natural Text Editing keymap** — `⌥←/→` jumps words, `⌘←/→` jumps line start/end, `⌥⌫` deletes word, `⌘⌫` clears line.
 
 ### Shell
-- **Zsh** with sane history (50k entries, deduped, shared between sessions).
+- **Zsh** with sane history (50k entries, deduped, shared between sessions), cached `compinit` (rebuild-once-a-day), and lazy-loaded `nvm` (cold start under 100ms).
 - **Starship prompt** — fast, two-line, shows OS / user / dir / git status / detected language version / command duration.
 - **zsh-autosuggestions** — fish-style ghost suggestions from history.
 - **zsh-syntax-highlighting** — commands turn green/red as you type.
 - UTF-8 locale + `COLORTERM=truecolor` exported, so SSH'd Linux apps render colors correctly.
 
+### Modern toolbox
+All additive — originals (`ls`, `cat`, `grep`, `find`, `cd`, `top`) keep working unchanged.
+
+| New command | Replaces (still works) | What's better |
+|---|---|---|
+| `eza` / `l` / `ll` / `lt` / `lg` | `ls` | git-aware, icons, tree mode |
+| `bat` | `cat` | syntax highlight, paged, used as `MANPAGER` |
+| `rg` | `grep` | gitignore-aware, ~10× faster |
+| `fd` | `find` | sane defaults, gitignore-aware |
+| `z <pat>` / `zi` | `cd` | frecency-ranked jumping (zoxide) |
+| `dust` | `du` | tree-style disk usage |
+| `btop` | `top` / `htop` | Tokyo-Night-themed TUI |
+| `delta` | git's pager | side-by-side, syntax-highlighted |
+| `direnv` | — | per-project env vars from `.envrc` |
+
+### New keybindings
+- `Ctrl-R` — atuin's fzf-style history search (with stats, fuzzy match, per-session filter).
+- `Up` after typing a prefix — zsh prefix history.
+- `Ctrl-T` — fzf file picker.
+- `Alt-C` — fzf cd to directory.
+- `**<TAB>` — fzf completion trigger (e.g., `vim **<TAB>`, `cd **<TAB>`).
+
 ### Aliases
 ```
-ls   = ls -lahG
-ll   = ls -lah
+ls   = ls -lahG          (unchanged)
+ll   = ls -lah           (unchanged)
 gs   = git status
 gd   = git diff
 gl   = git log --oneline --graph --decorate -20
 ..   = cd ..
 ...  = cd ../..
+l    = eza --icons --git
+ll   = eza -lah --icons --git --group-directories-first   (eza version, only if eza installed)
+lt   = eza --tree --level=2 --icons --git
+lg   = eza -lah --icons --git --git-ignore
 ```
 
 ---

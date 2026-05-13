@@ -1,0 +1,41 @@
+# git-delta with Tokyo Night colors.
+# Include from your ~/.gitconfig:
+#   [include]
+#       path = ~/dotfiles/git/delta.gitconfig
+[core]
+    pager = delta
+
+[interactive]
+    diffFilter = delta --color-only
+
+[merge]
+    conflictStyle = zdiff3
+
+[diff]
+    colorMoved = default
+
+[delta]
+    features = tokyonight
+    navigate = true            # n / N to move between diff sections
+    side-by-side = true
+    line-numbers = true
+    syntax-theme = tokyonight_night
+
+[delta "tokyonight"]
+    minus-style                   = syntax "#3a273a"
+    minus-non-emph-style          = syntax "#3a273a"
+    minus-emph-style              = syntax "#6b2e3c"
+    minus-empty-line-marker-style = syntax "#3a273a"
+    line-numbers-minus-style      = "#f7768e"
+    plus-style                    = syntax "#273849"
+    plus-non-emph-style           = syntax "#273849"
+    plus-emph-style               = syntax "#3d5a78"
+    plus-empty-line-marker-style  = syntax "#273849"
+    line-numbers-plus-style       = "#9ece6a"
+    line-numbers-zero-style       = "#3b4261"
+    line-numbers-left-style       = "#7aa2f7"
+    line-numbers-right-style      = "#7aa2f7"
+    file-style                    = "#7dcfff" bold
+    hunk-header-style             = "#7aa2f7" bold
+    hunk-header-decoration-style  = "#3b4261" box
+    file-decoration-style         = "#3b4261" ul

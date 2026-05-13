@@ -130,6 +130,15 @@ if command -v btop >/dev/null 2>&1; then
   fi
 fi
 
+# git-delta hint — ~/.gitconfig holds your identity, we don't symlink it.
+# Print a one-time include-snippet if it isn't already wired up.
+if command -v delta >/dev/null 2>&1 \
+   && ! grep -q 'dotfiles/git/delta.gitconfig' "$HOME/.gitconfig" 2>/dev/null; then
+  warn "To enable Tokyo Night git diffs, add this to ~/.gitconfig:"
+  warn "    [include]"
+  warn "        path = $DOTFILES/git/delta.gitconfig"
+fi
+
 ok "Bootstrap complete."
 
 if [[ ${#BACKUPS[@]} -gt 0 ]]; then

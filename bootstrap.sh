@@ -56,6 +56,7 @@ link "$DOTFILES/iterm2/tokyo-night.json"              "$HOME/Library/Application
 link "$DOTFILES/atuin/config.toml"                    "$HOME/.config/atuin/config.toml"
 link "$DOTFILES/bat/config"                           "$HOME/.config/bat/config"
 link "$DOTFILES/bat/themes/tokyonight_night.tmTheme"  "$HOME/.config/bat/themes/tokyonight_night.tmTheme"
+link "$DOTFILES/btop/tokyonight_night.theme"          "$HOME/.config/btop/themes/tokyonight_night.theme"
 
 # ---- 3b. bat theme cache ----------------------------------------------------
 # Re-build bat's theme cache so our vendored Tokyo Night .tmTheme appears in
@@ -121,6 +122,14 @@ if pgrep -x iTerm2 >/dev/null 2>&1; then
 fi
 
 echo
+# btop hint — we don't write to ~/.config/btop/btop.conf because btop rewrites
+# it on every quit. The user picks the theme manually once via the options menu.
+if command -v btop >/dev/null 2>&1; then
+  if ! grep -q 'color_theme = "tokyonight_night"' "$HOME/.config/btop/btop.conf" 2>/dev/null; then
+    warn "btop installed — open btop, press 'o' (options), and pick the 'tokyonight_night' theme."
+  fi
+fi
+
 ok "Bootstrap complete."
 
 if [[ ${#BACKUPS[@]} -gt 0 ]]; then

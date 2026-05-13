@@ -54,6 +54,17 @@ link "$DOTFILES/starship/starship.toml"               "$HOME/.config/starship.to
 link "$DOTFILES/iterm2/tokyonight_night.itermcolors"  "$HOME/.config/iterm2-themes/tokyonight_night.itermcolors"
 link "$DOTFILES/iterm2/tokyo-night.json"              "$HOME/Library/Application Support/iTerm2/DynamicProfiles/tokyo-night.json"
 link "$DOTFILES/atuin/config.toml"                    "$HOME/.config/atuin/config.toml"
+link "$DOTFILES/bat/config"                           "$HOME/.config/bat/config"
+link "$DOTFILES/bat/themes/tokyonight_night.tmTheme"  "$HOME/.config/bat/themes/tokyonight_night.tmTheme"
+
+# ---- 3b. bat theme cache ----------------------------------------------------
+# Re-build bat's theme cache so our vendored Tokyo Night .tmTheme appears in
+# `bat --list-themes`. Idempotent — safe to re-run.
+if command -v bat >/dev/null 2>&1 && [[ -f "$HOME/.config/bat/themes/tokyonight_night.tmTheme" ]]; then
+  log "Building bat theme cache…"
+  bat cache --build >/dev/null
+  ok "bat theme cache built."
+fi
 
 # ---- 4. nvm (optional) ------------------------------------------------------
 if [[ ! -d "$HOME/.nvm" ]]; then

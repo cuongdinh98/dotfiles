@@ -1,6 +1,12 @@
 # --- PATH & env ---
 export PATH="$HOME/.local/bin:$PATH"
 
+# Use bat as the man page pager (Tokyo Night-themed, syntax-highlighted).
+if command -v bat >/dev/null 2>&1; then
+  export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+  export MANROFFOPT="-c"
+fi
+
 # --- Locale & colors (fixes "ugly" SSH sessions, broken accented chars, etc.) ---
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8

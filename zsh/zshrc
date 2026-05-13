@@ -63,6 +63,16 @@ fi
 # Tokyo Night palette for fzf (matches starship/iTerm2).
 export FZF_DEFAULT_OPTS="--color=fg:#c0caf5,bg:#1a1b26,hl:#bb9af7,fg+:#c0caf5,bg+:#292e42,hl+:#7dcfff,info:#7aa2f7,prompt:#7dcfff,pointer:#7dcfff,marker:#9ece6a,spinner:#9ece6a,header:#9ece6a"
 
+# atuin: rebinds Ctrl-R + Up for fzf-style history search.
+# Must come BEFORE zsh-syntax-highlighting (highlighter wraps existing widgets;
+# atuin's _atuin_search widget must exist when the highlighter loads).
+# `filter_mode_shell_up_key_binding = "session"` in atuin/config.toml scopes
+# Up to current-session history (zsh's classic prefix-history behavior),
+# while Ctrl-R searches everything.
+if command -v atuin >/dev/null 2>&1; then
+  eval "$(atuin init zsh)"
+fi
+
 # --- nvm (lazy) ---
 # Eager nvm sourcing is the single biggest source of slow zsh startup
 # (~150-300ms). Define stubs for nvm/node/npm/npx that source nvm on first

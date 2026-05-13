@@ -53,6 +53,7 @@ link "$DOTFILES/zsh/zprofile"                         "$HOME/.zprofile"
 link "$DOTFILES/starship/starship.toml"               "$HOME/.config/starship.toml"
 link "$DOTFILES/iterm2/tokyonight_night.itermcolors"  "$HOME/.config/iterm2-themes/tokyonight_night.itermcolors"
 link "$DOTFILES/iterm2/tokyo-night.json"              "$HOME/Library/Application Support/iTerm2/DynamicProfiles/tokyo-night.json"
+link "$DOTFILES/atuin/config.toml"                    "$HOME/.config/atuin/config.toml"
 
 # ---- 4. nvm (optional) ------------------------------------------------------
 if [[ ! -d "$HOME/.nvm" ]]; then

@@ -1,0 +1,17 @@
+# atuin — local-only smart shell history.
+# Spec: docs/superpowers/specs/2026-05-13-modernize-toolbox-design.md
+
+# UI
+style = "compact"           # less screen real estate than "full"
+inline_height = 20          # don't take over the whole terminal
+show_preview = true
+show_help = true
+
+# Search
+search_mode = "fuzzy"       # like fzf
+filter_mode = "global"      # search across all sessions by default
+filter_mode_shell_up_key_binding = "session"  # Up = current session only
+
+# Sync — disabled. Opt in later with `atuin register`.
+auto_sync = false
+update_check = false

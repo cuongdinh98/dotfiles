@@ -73,6 +73,11 @@ if command -v atuin >/dev/null 2>&1; then
   eval "$(atuin init zsh)"
 fi
 
+# direnv: per-project env vars from .envrc. Hook runs on every prompt.
+if command -v direnv >/dev/null 2>&1; then
+  eval "$(direnv hook zsh)"
+fi
+
 # --- nvm (lazy) ---
 # Eager nvm sourcing is the single biggest source of slow zsh startup
 # (~150-300ms). Define stubs for nvm/node/npm/npx that source nvm on first

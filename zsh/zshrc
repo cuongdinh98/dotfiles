@@ -20,15 +20,19 @@ setopt AUTO_CD AUTO_PUSHD PUSHD_IGNORE_DUPS INTERACTIVE_COMMENTS
 bindkey -e
 
 # --- Completion ---
-# Rebuild the dump only if it's missing or older than 24h. The (#qN.mh+24)
-# glob qualifier matches ~/.zcompdump only if it exists and is older than 24h;
-# `compinit -C` skips the security audit (~100ms saved per shell).
+# Rebuild the dump only if it's missing or older than 24h. The (N.mh+24) glob
+# qualifier returns an empty array when the dump is fresh or missing (N is
+# null-glob-safe). compinit -C skips the security audit (~100ms saved per
+# shell); plain compinit performs it and regenerates the dump.
 autoload -Uz compinit
-if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
-  compinit
-else
-  compinit -C
-fi
+() {
+  local dump_files=( ~/.zcompdump(N.mh+24) )
+  if (( ${#dump_files} > 0 )); then
+    compinit
+  else
+    compinit -C
+  fi
+}
 zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
 

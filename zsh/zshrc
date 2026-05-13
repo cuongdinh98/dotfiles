@@ -65,7 +65,9 @@ fi
 # --- Modern tools (init order matters — see spec) ---
 # zoxide: smart `cd` replacement. `z foo` jumps to most-frecent dir matching foo,
 # `zi` opens an fzf-style interactive picker.
-eval "$(zoxide init zsh)"
+if command -v zoxide >/dev/null 2>&1; then
+  eval "$(zoxide init zsh)"
+fi
 
 # fzf: source key-bindings (Ctrl-T / Alt-C / Ctrl-R) and fuzzy completion (** trigger).
 # atuin (below) re-binds Ctrl-R; fzf's Ctrl-T and Alt-C survive.

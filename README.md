@@ -14,13 +14,18 @@ git clone https://github.com/cuongdinh98/dotfiles.git ~/dotfiles && ~/dotfiles/b
 
 | Path | What it is |
 |---|---|
-| `Brewfile` | All Homebrew packages (iTerm2, Starship, plugins, fonts, gh) |
+| `Brewfile` | All Homebrew packages (iTerm2, Starship, plugins, fonts, gh, plus the modern toolbox: eza/bat/rg/fd/zoxide/dust/btop/fzf/atuin/git-delta/direnv) |
 | `bootstrap.sh` | Idempotent installer — installs Homebrew, runs `brew bundle`, symlinks configs |
 | `zsh/zshrc` | Shell config: history, completion, aliases, plugin sourcing, Starship init |
 | `zsh/zprofile` | Brew shellenv (login shell) |
 | `starship/starship.toml` | Two-line Tokyo Night prompt with OS / user / dir / git / language segments |
 | `iterm2/tokyo-night.json` | iTerm2 [Dynamic Profile](https://iterm2.com/documentation-dynamic-profiles.html) — auto-loaded on launch |
 | `iterm2/tokyonight_night.itermcolors` | Standalone color preset (importable into any iTerm2 profile) |
+| `bat/` | bat config + vendored Tokyo Night `.tmTheme` (symlinked into `~/.config/bat/`) |
+| `atuin/config.toml` | atuin config: local-only, fuzzy Ctrl-R, no sync |
+| `btop/tokyonight_night.theme` | btop Tokyo Night theme (pick it via btop's `o` menu) |
+| `git/delta.gitconfig` | git-delta config — opt-in via `[include]` in your `~/.gitconfig` |
+| `tests/` | `run.sh` runs the migration helper + zshrc smoke test |
 
 ---
 
@@ -100,7 +105,6 @@ All additive — originals (`ls`, `cat`, `grep`, `find`, `cd`, `top`) keep worki
 ### Aliases
 ```
 ls   = ls -lahG          (unchanged)
-ll   = ls -lah           (unchanged)
 gs   = git status
 gd   = git diff
 gl   = git log --oneline --graph --decorate -20

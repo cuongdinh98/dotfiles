@@ -46,6 +46,11 @@ alias gs="git status"
 alias gd="git diff"
 alias gl="git log --oneline --graph --decorate -20"
 
+# --- Modern tools (init order matters — see spec) ---
+# zoxide: smart `cd` replacement. `z foo` jumps to most-frecent dir matching foo,
+# `zi` opens an fzf-style interactive picker.
+eval "$(zoxide init zsh)"
+
 # --- nvm (lazy) ---
 # Eager nvm sourcing is the single biggest source of slow zsh startup
 # (~150-300ms). Define stubs for nvm/node/npm/npx that source nvm on first

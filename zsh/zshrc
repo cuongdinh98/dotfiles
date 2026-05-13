@@ -46,10 +46,20 @@ alias gs="git status"
 alias gd="git diff"
 alias gl="git log --oneline --graph --decorate -20"
 
-# --- nvm ---
+# --- nvm (lazy) ---
+# Eager nvm sourcing is the single biggest source of slow zsh startup
+# (~150-300ms). Define stubs for nvm/node/npm/npx that source nvm on first
+# call, then transparently re-invoke the real binary.
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+_nvm_lazy_load() {
+  unset -f nvm node npm npx 2>/dev/null
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+}
+nvm()  { _nvm_lazy_load; nvm  "$@"; }
+node() { _nvm_lazy_load; node "$@"; }
+npm()  { _nvm_lazy_load; npm  "$@"; }
+npx()  { _nvm_lazy_load; npx  "$@"; }
 
 # --- Plugins (must be loaded BEFORE starship init for syntax highlighting to work right) ---
 [ -f /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ] && \
